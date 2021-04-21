@@ -34,18 +34,32 @@ public class Main {
 
 		double startTime, endTime, performTime = 0;
 		HashSet<Node> setMDS = null;
+		double[] times = new double[nTests];
 		
 		for (int i = 0; i < nTests; i++) {
 			startTime = System.nanoTime();
 			// Greedy Search
 			setMDS = greedySearchMDS(graph);
 			endTime = System.nanoTime();
-			performTime += (endTime - startTime) / 1e9;
+			times[i] = (endTime - startTime);
+			performTime += (endTime - startTime);
 			
 		}
 		
-		System.out.println("Test for: " + file.getName());
-		System.out.println("Greedy search average time in " + nTests + " runs: " + performTime/nTests + " seconds");
+		// Calculate mean and standard deviation
+		double mean = performTime / nTests;
+		double standardDeviation = 0;
+        for (int i = 0; i < nTests; i++) {
+            
+            standardDeviation += Math.pow((times[i] - mean), 2);
+            
+        }
+        
+        double sd = Math.sqrt(standardDeviation / nTests);
+		
+		System.out.println("Test for: " + file.getName() + " Greedy " + nTests + " runs.");
+		System.out.println("Mean time: " + String.format("%.6f", (mean / 1e9)) + " seconds.");
+		System.out.println("Standard deviation: " + String.format("%.6f", (sd / 1e9)) + " seconds. ");
 		System.out.println("Minimum dominating set consists of " + setMDS.size() + " nodes");
 
 	}
