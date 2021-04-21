@@ -2,16 +2,18 @@ package util;
 
 import java.util.HashSet;
 
+/**
+ * This class represents an vertex of the graph
+ *
+ */
 public class Node implements Comparable<Node> {
 
 	private int value;
 	private HashSet<Integer> edges;
-	private boolean covered;
 
 	public Node(int value) {
 		this.value = value;
 		edges = new HashSet<Integer>();
-		covered = false;
 	}
 
 	public int getEdgesSize() {
@@ -31,14 +33,7 @@ public class Node implements Comparable<Node> {
 		return edges;
 	}
 
-	public void setCovered(boolean covered) {
-		this.covered = covered;
-	}
-
-	public boolean isCovered() {
-		return covered;
-	}
-
+	// Used for sorting the nodes by biggest span in descending order
 	public int compareTo(Node node) {
 		if (this.getEdgesSize() > node.getEdgesSize()) {
 			return 1;
@@ -49,13 +44,4 @@ public class Node implements Comparable<Node> {
 		return 0;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Node graphNode = (Node) o;
-		return getValue() == graphNode.getValue();
-	}
 }

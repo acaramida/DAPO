@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,26 +10,42 @@ import java.util.HashSet;
 
 import util.*;
 
+/**
+ * The input loading and tests are based from
+ * https://github.com/JavaZakariae/MinDominatingSet the Graph, Node objects and
+ * implementation of the greedy algorithm are based from
+ * https://github.com/stitch80/UCSD-CapstoneProject and
+ * http://ac.informatik.uni-freiburg.de/teaching/ss_12/netalg/lectures/chapter7.pdf
+ *
+ */
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-		Graph g = new Graph();
+		System.setIn(new FileInputStream("run.txt"));
+
+		Graph graph = new Graph();
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		String path = in.readLine();
-
+		String[] line = in.readLine().split(" ");
+		int nTests = Integer.parseInt(line[0]);
+		
 		// Load the graph
-		File file = new File(path);
-		createGraphFromDimacsFormat(g, file);
+		File file = new File(line[1]);
+		createGraphFromDimacsFormat(graph, file);
 
-		double startTime = System.nanoTime();
-		// Order the list of nodes by n of edges
-		g.orderListOfNodes();
-
-		// Greedy Search
-		HashSet<Node> setMDS = greedySearchMDS(g.getSortedNodes(), g.getGraph());
-		double endTime = System.nanoTime();
-		double performTime = (endTime - startTime) / 1e9;
-		System.out.println("Greedy search performed in " + performTime + " seconds");
+		double startTime, endTime, performTime = 0;
+		HashSet<Node> setMDS = null;
+		
+		for (int i = 0; i < nTests; i++) {
+			startTime = System.nanoTime();
+			// Greedy Search
+			setMDS = greedySearchMDS(graph);
+			endTime = System.nanoTime();
+			performTime += (endTime - startTime) / 1e9;
+			
+		}
+		
+		System.out.println("Test for: " + file.getName());
+		System.out.println("Greedy search average time in " + nTests + " runs: " + performTime/nTests + " seconds");
 		System.out.println("Minimum dominating set consists of " + setMDS.size() + " nodes");
 
 	}
@@ -39,16 +56,13 @@ public class Main {
 	 * @param file a Dimacs file format.
 	 * @return the mds of the graph
 	 */
-	public static HashSet<Node> greedySearchMDS(ArrayList<Node> sortedList, HashMap<Integer, Node> graph) {
-		// Get all the nodes as uncovered
-		HashMap<Integer, Node> uncoveredNodes = new HashMap<Integer, Node>(graph);
+	public static HashSet<Node> greedySearchMDS(Graph graph) {
+		// Initialise the map of uncovered with all nodes
+		HashMap<Integer, Node> uncoveredNodes = new HashMap<Integer, Node>(graph.getGraph());
+		// Get list of nodes ordered by span size in descending order
+		ArrayList<Node> sortedList = graph.orderListOfNodes();
 		// Set for dominating set (MDS)
 		HashSet<Node> setMDS = new HashSet<Node>();
-
-		// Initialise nodes in sortedList as uncovered
-		for (Node g : sortedList) {
-			g.setCovered(false);
-		}
 
 		for (int i = 0; i < sortedList.size(); i++) {
 			// When there is no uncovered nodes - break
@@ -57,23 +71,20 @@ public class Main {
 			}
 			// Take a node from the list
 			Node currNode = sortedList.get(i);
-			// Check if the node is covered
-			// If node is uncovered add it to the MDS list and set it covered
+
+			// Check if the node is uncovered
+			// If node is uncovered add it to the MDS list and remove from uncoveredNodes
 			// Otherwise skip this node
-			if (!currNode.isCovered()) {
+			if (uncoveredNodes.containsKey(currNode.getValue())) {
 				setMDS.add(currNode);
-				currNode.setCovered(true);
+				uncoveredNodes.remove(currNode.getValue());
 			} else {
 				continue;
 			}
-			// Remove node from the uncovered set
-			uncoveredNodes.remove(currNode.getValue());
-			// Check the neighbours of the node
-			// If are uncovered - set them to covered and remove from
-			// uncovered set
+
+			// Add the nodes in the span as covered
 			for (int node : currNode.getEdges()) {
 				if (uncoveredNodes.containsKey(node)) {
-					uncoveredNodes.get(node).setCovered(true);
 					uncoveredNodes.remove(node);
 				}
 			}
@@ -85,8 +96,7 @@ public class Main {
 	/**
 	 * This method creates a graph data structure from a Dimacs file format. *
 	 * 
-	 * @author https://github.com/JavaZakariae/MinDominatingSet
-	 * @param file a Dimacs file format.
+	 * @param a file with Dimacs file format.
 	 * @return an undirected graph
 	 */
 	public static Graph createGraphFromDimacsFormat(Graph g, File file) {
@@ -110,10 +120,9 @@ public class Main {
 	}
 
 	/**
-	 * add an edge to Graph g, modified for an undirected graph
-	 * the edge is added for both nodes.
+	 * add an edge to Graph g, modified for an undirected graph the edge is added
+	 * for both nodes.
 	 * 
-	 * @author https://github.com/JavaZakariae/MinDominatingSet
 	 * @param g    the given graph
 	 * @param line the line containing the linking information.
 	 */

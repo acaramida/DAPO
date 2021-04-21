@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+/**
+ * This class represents an graph
+ *
+ */
 public class Graph {
 
 	//Graph
@@ -35,9 +39,10 @@ public class Graph {
         return graph;
     }
 
-    //Set the list of nodes from the nodes with the biggest number of neighbours in descending order
-	public void orderListOfNodes() {
+    //Order the list of nodes by biggest number of neighbours (span) in descending order
+	public ArrayList<Node> orderListOfNodes() {
         sortedNodes.addAll(graph.values());
         Collections.sort(sortedNodes, Collections.reverseOrder());
+        return sortedNodes;
     }
 }
