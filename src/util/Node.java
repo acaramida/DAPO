@@ -22,8 +22,9 @@ public class Node implements Comparable<Node> {
 		return value;
 	}
 
-	public void addEdge(int follower) {
-		edges.add(follower);
+	public void addEdge(int neighbour) {
+		if(!edges.contains(neighbour))
+			edges.add(neighbour);
 	}
 
 	public HashSet<Integer> getEdges() {

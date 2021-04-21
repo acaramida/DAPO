@@ -21,7 +21,7 @@ public class Graph {
     }
 
 
-    public void addVertex(int num) {
+    public void addNode(int num) {
         if (!graph.containsKey(num)) {
             graph.put(num, new Node(num));
         }

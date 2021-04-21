@@ -1,12 +1,11 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
 
 import util.*;
 
@@ -15,11 +14,11 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		Graph g = new Graph();
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		String file = in.readLine();
+		String path = in.readLine();
 
 		// Load the graph
-		graphLoad(g, file);
-
+		File file = new File(path);
+		createGraphFromDimacsFormat(g, file);
 
 		double startTime = System.nanoTime();
 		// Order the list of nodes by n of edges
@@ -34,7 +33,12 @@ public class Main {
 
 	}
 
-	// Greedy Search on the passed sorted list of nodes
+	/**
+	 * This method implements the greedy algorithm. *
+	 * 
+	 * @param file a Dimacs file format.
+	 * @return the mds of the graph
+	 */
 	public static HashSet<Node> greedySearchMDS(ArrayList<Node> sortedList, HashMap<Integer, Node> graph) {
 		// Get all the nodes as uncovered
 		HashMap<Integer, Node> uncoveredNodes = new HashMap<Integer, Node>(graph);
@@ -78,32 +82,48 @@ public class Main {
 		return setMDS;
 	}
 
-	public static void graphLoad(Graph g, String filename) {
-		Set<Integer> seen = new HashSet<Integer>();
-		Scanner sc;
-		try {
-			sc = new Scanner(new File(filename));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-		// Iterate over the lines in the file, adding new
-		// vertices as they are found and connecting them with edges.
-		while (sc.hasNextInt()) {
-			int v1 = sc.nextInt();
-			int v2 = sc.nextInt();
-			if (!seen.contains(v1)) {
-				g.addVertex(v1);
-				seen.add(v1);
-			}
-			if (!seen.contains(v2)) {
-				g.addVertex(v2);
-				seen.add(v2);
-			}
-			g.addEdge(v1, v2);
-			g.addEdge(v2, v1);
-		}
+	/**
+	 * This method creates a graph data structure from a Dimacs file format. *
+	 * 
+	 * @author https://github.com/JavaZakariae/MinDominatingSet
+	 * @param file a Dimacs file format.
+	 * @return an undirected graph
+	 */
+	public static Graph createGraphFromDimacsFormat(Graph g, File file) {
+		BufferedReader reader;
 
-		sc.close();
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String line;
+			do {
+				line = reader.readLine();
+			} while (line.charAt(0) != 'p');
+			while ((line = reader.readLine()) != null) {
+				String[] edge = line.split(" ");
+				addEdge(g, edge);
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return g;
 	}
+
+	/**
+	 * add an edge to Graph g, modified for an undirected graph
+	 * the edge is added for both nodes.
+	 * 
+	 * @author https://github.com/JavaZakariae/MinDominatingSet
+	 * @param g    the given graph
+	 * @param line the line containing the linking information.
+	 */
+	public static void addEdge(Graph g, String[] line) {
+		int u = Integer.parseInt(line[1]);
+		int v = Integer.parseInt(line[2]);
+		g.addNode(u);
+		g.addNode(v);
+		g.addEdge(u, v);
+		g.addEdge(v, u);
+	}
+
 }
