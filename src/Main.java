@@ -12,11 +12,10 @@ import util.*;
 
 /**
  * The input loading and tests are based from
- * https://github.com/JavaZakariae/MinDominatingSet the Graph, Node objects and
- * implementation of the greedy algorithm are based from
- * https://github.com/stitch80/UCSD-CapstoneProject and
+ * https://github.com/JavaZakariae/MinDominatingSet
+ * The Graph, Node objects and implementation of the 
+ * greedy algorithm are based from https://github.com/stitch80/UCSD-CapstoneProject and
  * http://ac.informatik.uni-freiburg.de/teaching/ss_12/netalg/lectures/chapter7.pdf
- *
  */
 public class Main {
 
@@ -27,7 +26,7 @@ public class Main {
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		String[] line = in.readLine().split(" ");
 		int nTests = Integer.parseInt(line[0]);
-		
+
 		// Load the graph
 		File file = new File(line[1]);
 		createGraphFromDimacsFormat(graph, file);
@@ -35,7 +34,7 @@ public class Main {
 		double startTime, endTime, performTime = 0;
 		HashSet<Node> setMDS = null;
 		double[] times = new double[nTests];
-		
+
 		for (int i = 0; i < nTests; i++) {
 			startTime = System.nanoTime();
 			// Greedy Search
@@ -43,20 +42,19 @@ public class Main {
 			endTime = System.nanoTime();
 			times[i] = (endTime - startTime);
 			performTime += (endTime - startTime);
-			
+
 		}
-		
+
 		// Calculate mean and standard deviation
 		double mean = performTime / nTests;
 		double standardDeviation = 0;
-        for (int i = 0; i < nTests; i++) {
-            
-            standardDeviation += Math.pow((times[i] - mean), 2);
-            
-        }
-        
-        double sd = Math.sqrt(standardDeviation / nTests);
-		
+		for (int i = 0; i < nTests; i++) {
+
+			standardDeviation += Math.pow((times[i] - mean), 2);
+
+		}
+
+		double sd = Math.sqrt(standardDeviation / nTests);
 		System.out.println("Test for: " + file.getName() + " Greedy " + nTests + " runs.");
 		System.out.println("Mean time: " + String.format("%.6f", (mean / 1e9)) + " seconds.");
 		System.out.println("Standard deviation: " + String.format("%.6f", (sd / 1e9)) + " seconds. ");
