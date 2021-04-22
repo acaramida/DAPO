@@ -1,0 +1,56 @@
+Greedy pokec_500.col 20 runs.
+Mean time (s): 0.000692
+Standard deviation (s): 0.000166
+MinDS: 46 nodes
+
+Greedy pokec_2000.col 20 runs.
+Mean time (s): 0.001600
+Standard deviation (s): 0.000316
+MinDS: 402 nodes
+
+Greedy pokec_10000.col 20 runs.
+Mean time (s): 0.003583
+Standard deviation (s): 0.001102
+MinDS: 2271 nodes
+
+Greedy pokec_20000.col 20 runs.
+Mean time (s): 0.007873
+Standard deviation (s): 0.002683
+MinDS: 4497 nodes
+
+Greedy pokec_50000.col 20 runs.
+Mean time (s): 0.020445
+Standard deviation (s): 0.003244
+MinDS: 11272 nodes
+
+Greedy gplus_200.col 20 runs.
+Mean time (s): 0.000034
+Standard deviation (s): 0.000003
+MinDS: 50 nodes
+
+Greedy gplus_500.col 20 runs.
+Mean time (s): 0.000091
+Standard deviation (s): 0.000010
+MinDS: 130 nodes
+
+Greedy gplus_2000.col 20 runs.
+Mean time (s): 0.000419
+Standard deviation (s): 0.000056
+MinDS: 452 nodes
+
+Greedy gplus_10000.col 20 runs.
+Mean time (s): 0.002696
+Standard deviation (s): 0.000387
+MinDS: 2776 nodes
+
+Greedy gplus_20000.col 20 runs.
+Mean time (s): 0.006910
+Standard deviation (s): 0.002149
+MinDS: 5332 nodes
+
+Greedy gplus_50000.col 20 runs.
+Mean time (s): 0.023243
+Standard deviation (s): 0.004481
+MinDS: 13056 nodes
+
+End

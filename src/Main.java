@@ -12,9 +12,9 @@ import util.*;
 
 /**
  * The input loading and tests are based from
- * https://github.com/JavaZakariae/MinDominatingSet
- * The Graph, Node objects and implementation of the 
- * greedy algorithm are based from https://github.com/stitch80/UCSD-CapstoneProject and
+ * https://github.com/JavaZakariae/MinDominatingSet The Graph, Node objects and
+ * implementation of the greedy algorithm are based from
+ * https://github.com/stitch80/UCSD-CapstoneProject and
  * http://ac.informatik.uni-freiburg.de/teaching/ss_12/netalg/lectures/chapter7.pdf
  */
 public class Main {
@@ -22,43 +22,49 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		System.setIn(new FileInputStream("run.txt"));
 
-		Graph graph = new Graph();
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		String[] line = in.readLine().split(" ");
-		int nTests = Integer.parseInt(line[0]);
+		String line = in.readLine();
+		int nTests = Integer.parseInt(line);
+		line = in.readLine();
+		
+		while (line != null) {
+			Graph graph = new Graph();
+			// Load the graph
+			File file = new File(line);
+			createGraphFromDimacsFormat(graph, file);
 
-		// Load the graph
-		File file = new File(line[1]);
-		createGraphFromDimacsFormat(graph, file);
+			double startTime, endTime, performTime = 0;
+			HashSet<Node> setMDS = null;
+			double[] times = new double[nTests];
 
-		double startTime, endTime, performTime = 0;
-		HashSet<Node> setMDS = null;
-		double[] times = new double[nTests];
+			for (int i = 0; i < nTests; i++) {
+				startTime = System.nanoTime();
+				// Greedy Search
+				setMDS = greedySearchMDS(graph);
+				endTime = System.nanoTime();
+				times[i] = (endTime - startTime);
+				performTime += (endTime - startTime);
 
-		for (int i = 0; i < nTests; i++) {
-			startTime = System.nanoTime();
-			// Greedy Search
-			setMDS = greedySearchMDS(graph);
-			endTime = System.nanoTime();
-			times[i] = (endTime - startTime);
-			performTime += (endTime - startTime);
+			}
 
+			// Calculate mean and standard deviation
+			double mean = performTime / nTests;
+			double standardDeviation = 0;
+			for (int i = 0; i < nTests; i++) {
+
+				standardDeviation += Math.pow((times[i] - mean), 2);
+
+			}
+
+			double sd = Math.sqrt(standardDeviation / nTests);
+			System.out.println("Greedy " + file.getName() + " " + nTests + " runs.");
+			System.out.println("Mean time (s): " + String.format("%.6f", (mean / 1e9)));
+			System.out.println("Standard deviation (s): " + String.format("%.6f", (sd / 1e9)));
+			System.out.println("MinDS: " + setMDS.size() + " nodes");
+			System.out.println();
+			line = in.readLine();
 		}
-
-		// Calculate mean and standard deviation
-		double mean = performTime / nTests;
-		double standardDeviation = 0;
-		for (int i = 0; i < nTests; i++) {
-
-			standardDeviation += Math.pow((times[i] - mean), 2);
-
-		}
-
-		double sd = Math.sqrt(standardDeviation / nTests);
-		System.out.println("Test for: " + file.getName() + " Greedy " + nTests + " runs.");
-		System.out.println("Mean time: " + String.format("%.6f", (mean / 1e9)) + " seconds.");
-		System.out.println("Standard deviation: " + String.format("%.6f", (sd / 1e9)) + " seconds. ");
-		System.out.println("Minimum dominating set consists of " + setMDS.size() + " nodes");
+		System.out.println("End");
 
 	}
 
