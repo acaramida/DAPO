@@ -1,10 +1,9 @@
-20
+50
 tests/pokec_500.col
 tests/pokec_2000.col
 tests/pokec_10000.col
 tests/pokec_20000.col
 tests/pokec_50000.col
-tests/gplus_200.col
 tests/gplus_500.col
 tests/gplus_2000.col
 tests/gplus_10000.col

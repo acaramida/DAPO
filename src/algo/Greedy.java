@@ -62,9 +62,9 @@ public class Greedy {
 	 * @param g
 	 * @param v
 	 */
-	private void adjustWeights(Graph g, int v) {
+	private void adjustWeights(Graph graph, int v) {
 		weights.replace(v, 0);
-		for (Integer vj : g.getGraph().get(v)) {
+		for (Integer vj : graph.getGraph().get(v)) {
 			if (weights.get(vj) > 0) {
 				if (!covered.get(v)) {
 					int oldValue = weights.get(vj);
@@ -74,7 +74,7 @@ public class Greedy {
 					covered.replace(vj, true);
 					int oldValue = weights.get(vj);
 					weights.replace(vj, oldValue - 1);
-					for (Integer vk : g.getGraph().get(vj)) {
+					for (Integer vk : graph.getGraph().get(vj)) {
 						if (weights.get(vk) > 0) {
 							oldValue = weights.get(vk);
 							weights.replace(vk, oldValue - 1);
@@ -92,7 +92,7 @@ public class Greedy {
 	 *
 	 * @return the mds of the graph instance
 	 */
-	public Set<Integer> run(Graph graph) {
+	public int run(Graph graph) {
 		Set<Integer> mds = new HashSet<>();
 		// initialisation
 		for (Integer key : graph.getGraph().keySet()) {
@@ -105,7 +105,7 @@ public class Greedy {
 			adjustWeights(graph, v);
 			v = chooseVertex();
 		}
-		return mds;
+		return mds.size();
 	}
 
 }

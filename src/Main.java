@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Set;
 
 import algo.Greedy;
 import util.*;
@@ -12,6 +11,7 @@ import util.*;
 /**
  * https://github.com/JavaZakariae/MinDominatingSet
  * http://ac.informatik.uni-freiburg.de/teaching/ss_12/netalg/lectures/chapter7.pdf
+ * https://arxiv.org/abs/1705.00318
  * test files - https://davidchalupa.github.io/research/data/social.html
  */
 public class Main {
@@ -27,7 +27,6 @@ public class Main {
 		while (line != null) {
 
 			double startTime, endTime, totalTime = 0;
-			Set<Integer> setMDS = null;
 			double[] times = new double[nTests];
 			int[] sets = new int[nTests];
 			int totalSets = 0;
@@ -39,14 +38,15 @@ public class Main {
 			// Load the graph
 			createGraph(graph, file);
 			
-			Greedy greedy = new Greedy();
 			for (int i = 0; i < nTests; i++) {
+				// start timer
 				startTime = System.nanoTime();
 				// Greedy Search
-				setMDS = greedy.run(graph);
+				int size = new Greedy().run(graph);
+				// end timer
 				endTime = System.nanoTime();
+				// save and calc data for prints
 				times[i] = (endTime - startTime);
-				int size = setMDS.size();
 				if(size < minSet)
 					minSet = size;
 				if(size > maxSet)
@@ -70,12 +70,12 @@ public class Main {
 
 			System.out.println();
 			System.out.println("Greedy " + file.getName() + " " + nTests + " runs.");
-			System.out.println("Mean time (s): " + String.format("%.3f", (meanTime / 1e9)));
-			System.out.println("Standard deviation (s): " + String.format("%.3f", (Math.sqrt(sdTime / nTests) / 1e9)));
+			System.out.println("Mean time (s): " + String.format("%.6f", (meanTime / 1e9)));
+			System.out.println("Standard deviation (s): " + String.format("%.6f", (Math.sqrt(sdTime / nTests) / 1e9)));
 			System.out.println("Min MDS: " + minSet);
 			System.out.println("Max MDS: " + maxSet);
-			System.out.println("Mean MDS: " + String.format("%.3f",meanSize));
-			System.out.println("Standard deviation MDS: " + String.format("%.3f",Math.sqrt(sdSize / nTests)));
+			System.out.println("Mean MDS: " + String.format("%.6f",meanSize));
+			System.out.println("Standard deviation MDS: " + String.format("%.6f",Math.sqrt(sdSize / nTests)));
 			line = in.readLine();
 		}
 		System.out.println("\nEnd");
