@@ -10,6 +10,10 @@ import java.util.Set;
 
 /**
  * This class represents an graph
+ * 
+ * Removed unused methods, original on git link below
+ * 
+ * @author https://github.com/JavaZakariae/MinDominatingSet
  *
  */
 public class Graph {

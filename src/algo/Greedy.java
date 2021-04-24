@@ -1,6 +1,7 @@
 package algo;
 
 import java.util.ArrayList;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +12,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import util.Graph;
 
+/**
+ * Class for the Greedy algorithm
+ * 
+ * Removed unused methods and changed the run method to return only the size of
+ * the dominating set, original on git link below
+ * 
+ * @author https://github.com/JavaZakariae/MinDominatingSet
+ */
 public class Greedy {
 
 	/**
@@ -55,9 +64,8 @@ public class Greedy {
 	}
 
 	/**
-	 * adjustWeights implementation After adding a vertex
-	 * to the dominating Set, an adjustment of weight should be done on the
-	 * vertices.
+	 * adjustWeights implementation After adding a vertex to the dominating Set, an
+	 * adjustment of weight should be done on the vertices.
 	 * 
 	 * @param g
 	 * @param v
@@ -90,7 +98,7 @@ public class Greedy {
 	 *
 	 * @param graph the graph instance
 	 *
-	 * @return the mds of the graph instance
+	 * @return the size of mds of the graph instance
 	 */
 	public int run(Graph graph) {
 		Set<Integer> mds = new HashSet<>();

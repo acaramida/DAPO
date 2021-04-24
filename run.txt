@@ -1,4 +1,4 @@
-50
+20
 tests/pokec_500.col
 tests/pokec_2000.col
 tests/pokec_10000.col
@@ -9,3 +9,7 @@ tests/gplus_2000.col
 tests/gplus_10000.col
 tests/gplus_20000.col
 tests/gplus_50000.col
+tests/anna.col
+tests/homer.col
+tests/david.col
+tests/huck.col

@@ -10,9 +10,9 @@ import util.*;
 
 /**
  * https://github.com/JavaZakariae/MinDominatingSet
- * http://ac.informatik.uni-freiburg.de/teaching/ss_12/netalg/lectures/chapter7.pdf
  * https://arxiv.org/abs/1705.00318
- * test files - https://davidchalupa.github.io/research/data/social.html
+ * tests - https://davidchalupa.github.io/research/data/social.html
+ * tests - https://mat.gsia.cmu.edu/COLOR/instances.html
  */
 public class Main {
 
@@ -32,24 +32,24 @@ public class Main {
 			int totalSets = 0;
 			int minSet = Integer.MAX_VALUE;
 			int maxSet = 0;
-			
+
 			File file = new File(line);
 			Graph graph = new Graph();
 			// Load the graph
 			createGraph(graph, file);
-			
+
 			for (int i = 0; i < nTests; i++) {
 				// start timer
-				startTime = System.nanoTime();
+				startTime = System.currentTimeMillis();
 				// Greedy Search
 				int size = new Greedy().run(graph);
 				// end timer
-				endTime = System.nanoTime();
+				endTime = System.currentTimeMillis();
 				// save and calc data for prints
 				times[i] = (endTime - startTime);
-				if(size < minSet)
+				if (size < minSet)
 					minSet = size;
-				if(size > maxSet)
+				if (size > maxSet)
 					maxSet = size;
 				sets[i] = size;
 				totalSets += size;
@@ -58,7 +58,7 @@ public class Main {
 
 			// Calculate mean and standard deviation
 			double meanTime = totalTime / nTests;
-			double meanSize = (double)totalSets / nTests;
+			double meanSize = (double) totalSets / nTests;
 			double sdTime = 0;
 			double sdSize = 0;
 			for (int i = 0; i < nTests; i++) {
@@ -70,12 +70,12 @@ public class Main {
 
 			System.out.println();
 			System.out.println("Greedy " + file.getName() + " " + nTests + " runs.");
-			System.out.println("Mean time (s): " + String.format("%.6f", (meanTime / 1e9)));
-			System.out.println("Standard deviation (s): " + String.format("%.6f", (Math.sqrt(sdTime / nTests) / 1e9)));
+			System.out.println("Mean time (ms): " + String.format("%.3f", meanTime));
+			System.out.println("Standard deviation (ms): " + String.format("%.3f", (Math.sqrt(sdTime / nTests))));
 			System.out.println("Min MDS: " + minSet);
 			System.out.println("Max MDS: " + maxSet);
-			System.out.println("Mean MDS: " + String.format("%.6f",meanSize));
-			System.out.println("Standard deviation MDS: " + String.format("%.6f",Math.sqrt(sdSize / nTests)));
+			System.out.println("Mean MDS: " + String.format("%.3f", meanSize));
+			System.out.println("Standard deviation MDS: " + String.format("%.3f", Math.sqrt(sdSize / nTests)));
 			line = in.readLine();
 		}
 		System.out.println("\nEnd");
@@ -83,7 +83,9 @@ public class Main {
 	}
 
 	/**
-	 * This method creates a graph data structure from a Dimacs file format. *
+	 * This method creates a graph data structure from a Dimacs file format.
+	 * 
+	 * @author https://github.com/JavaZakariae/MinDominatingSet
 	 * 
 	 * @param a file with Dimacs file format.
 	 * @return an undirected graph
@@ -109,7 +111,9 @@ public class Main {
 	}
 
 	/**
-	 * add an edge to Graph g, undirected graph the edge is added for both nodes.
+	 * Add an edge to Graph g, undirected graph the edge is added for both nodes.
+	 * 
+	 * @author https://github.com/JavaZakariae/MinDominatingSet
 	 * 
 	 * @param g    the given graph
 	 * @param line the line containing the linking information.
