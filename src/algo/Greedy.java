@@ -95,6 +95,7 @@ public class Greedy {
 	}
 
 	/**
+	 * Made small change on while, changed to do while to respect pseudo code
 	 *
 	 * @param graph the graph instance
 	 *
@@ -107,12 +108,16 @@ public class Greedy {
 			weights.put(key, 1 + graph.getDegreeOf(key));
 			covered.put(key, false);
 		}
-		int v = chooseVertex();
-		while (v != -1) {
-			mds.add(v);
-			adjustWeights(graph, v);
+
+		int v = 0;
+		do {
 			v = chooseVertex();
-		}
+			if (v != -1) {
+				mds.add(v);
+				adjustWeights(graph, v);
+			}
+		} while (v != -1);
+
 		return mds.size();
 	}
 
