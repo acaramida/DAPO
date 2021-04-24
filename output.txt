@@ -1,114 +1,114 @@
 
 Greedy pokec_500.col 20 runs.
-Mean time (ms): 2.100
-Standard deviation (ms): 5.069
+Mean time (s): 0.00212
+Standard deviation (s): 0.00506
 Min MDS: 16
 Max MDS: 16
-Mean MDS: 16.000
-Standard deviation MDS: 0.000
+Mean MDS: 16.00
+Standard deviation MDS: 0.00
 
 Greedy pokec_2000.col 20 runs.
-Mean time (ms): 3.700
-Standard deviation (ms): 0.781
+Mean time (s): 0.00347
+Standard deviation (s): 0.00062
 Min MDS: 75
 Max MDS: 75
-Mean MDS: 75.000
-Standard deviation MDS: 0.000
+Mean MDS: 75.00
+Standard deviation MDS: 0.00
 
 Greedy pokec_10000.col 20 runs.
-Mean time (ms): 50.000
-Standard deviation (ms): 5.196
+Mean time (s): 0.04762
+Standard deviation (s): 0.00364
 Min MDS: 413
 Max MDS: 414
-Mean MDS: 413.150
-Standard deviation MDS: 0.357
+Mean MDS: 413.05
+Standard deviation MDS: 0.22
 
 Greedy pokec_20000.col 20 runs.
-Mean time (ms): 206.100
-Standard deviation (ms): 2.897
+Mean time (s): 0.20411
+Standard deviation (s): 0.00277
 Min MDS: 924
 Max MDS: 928
-Mean MDS: 925.750
-Standard deviation MDS: 0.942
+Mean MDS: 925.80
+Standard deviation MDS: 1.21
 
 Greedy pokec_50000.col 20 runs.
-Mean time (ms): 1652.900
-Standard deviation (ms): 14.219
+Mean time (s): 1.65080
+Standard deviation (s): 0.02688
 Min MDS: 2767
-Max MDS: 2787
-Mean MDS: 2777.350
-Standard deviation MDS: 4.942
+Max MDS: 2783
+Mean MDS: 2776.25
+Standard deviation MDS: 4.91
 
 Greedy gplus_500.col 20 runs.
-Mean time (ms): 0.300
-Standard deviation (ms): 0.458
+Mean time (s): 0.00033
+Standard deviation (s): 0.00000
 Min MDS: 42
-Max MDS: 43
-Mean MDS: 42.150
-Standard deviation MDS: 0.357
+Max MDS: 42
+Mean MDS: 42.00
+Standard deviation MDS: 0.00
 
 Greedy gplus_2000.col 20 runs.
-Mean time (ms): 4.300
-Standard deviation (ms): 0.458
+Mean time (s): 0.00424
+Standard deviation (s): 0.00004
 Min MDS: 176
-Max MDS: 178
-Mean MDS: 177.150
-Standard deviation MDS: 0.792
+Max MDS: 179
+Mean MDS: 177.35
+Standard deviation MDS: 1.11
 
 Greedy gplus_10000.col 20 runs.
-Mean time (ms): 94.700
-Standard deviation (ms): 0.900
-Min MDS: 892
-Max MDS: 900
-Mean MDS: 895.650
-Standard deviation MDS: 2.351
+Mean time (s): 0.09503
+Standard deviation (s): 0.00063
+Min MDS: 893
+Max MDS: 899
+Mean MDS: 895.85
+Standard deviation MDS: 1.62
 
 Greedy gplus_20000.col 20 runs.
-Mean time (ms): 371.600
-Standard deviation (ms): 3.200
+Mean time (s): 0.37109
+Standard deviation (s): 0.00259
 Min MDS: 1808
-Max MDS: 1817
-Mean MDS: 1812.000
-Standard deviation MDS: 2.449
+Max MDS: 1821
+Mean MDS: 1813.80
+Standard deviation MDS: 3.91
 
 Greedy gplus_50000.col 20 runs.
-Mean time (ms): 2836.300
-Standard deviation (ms): 27.120
-Min MDS: 4832
-Max MDS: 4854
-Mean MDS: 4845.000
-Standard deviation MDS: 5.568
+Mean time (s): 2.82216
+Standard deviation (s): 0.02871
+Min MDS: 4830
+Max MDS: 4861
+Mean MDS: 4844.90
+Standard deviation MDS: 8.43
 
 Greedy anna.col 20 runs.
-Mean time (ms): 0.050
-Standard deviation (ms): 0.218
+Mean time (s): 0.00006
+Standard deviation (s): 0.00000
 Min MDS: 12
 Max MDS: 12
-Mean MDS: 12.000
-Standard deviation MDS: 0.000
+Mean MDS: 12.00
+Standard deviation MDS: 0.00
 
 Greedy homer.col 20 runs.
-Mean time (ms): 0.750
-Standard deviation (ms): 0.433
+Mean time (s): 0.00076
+Standard deviation (s): 0.00001
 Min MDS: 91
 Max MDS: 92
-Mean MDS: 91.450
-Standard deviation MDS: 0.497
+Mean MDS: 91.30
+Standard deviation MDS: 0.46
 
 Greedy david.col 20 runs.
-Mean time (ms): 0.050
-Standard deviation (ms): 0.218
+Mean time (s): 0.00002
+Standard deviation (s): 0.00000
 Min MDS: 2
 Max MDS: 2
-Mean MDS: 2.000
-Standard deviation MDS: 0.000
+Mean MDS: 2.00
+Standard deviation MDS: 0.00
 
 Greedy huck.col 20 runs.
-Mean time (ms): 0.050
-Standard deviation (ms): 0.218
+Mean time (s): 0.00003
+Standard deviation (s): 0.00000
 Min MDS: 9
 Max MDS: 9
-Mean MDS: 9.000
-Standard deviation MDS: 0.000
+Mean MDS: 9.00
+Standard deviation MDS: 0.00
 
 End

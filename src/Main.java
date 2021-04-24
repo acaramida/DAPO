@@ -40,11 +40,11 @@ public class Main {
 
 			for (int i = 0; i < nTests; i++) {
 				// start timer
-				startTime = System.currentTimeMillis();
+				startTime = System.nanoTime();
 				// Greedy Search
 				int size = new Greedy().run(graph);
 				// end timer
-				endTime = System.currentTimeMillis();
+				endTime = System.nanoTime();
 				// save and calc data for prints
 				times[i] = (endTime - startTime);
 				if (size < minSet)
@@ -70,12 +70,12 @@ public class Main {
 
 			System.out.println();
 			System.out.println("Greedy " + file.getName() + " " + nTests + " runs.");
-			System.out.println("Mean time (ms): " + String.format("%.3f", meanTime));
-			System.out.println("Standard deviation (ms): " + String.format("%.3f", (Math.sqrt(sdTime / nTests))));
+			System.out.println("Mean time (s): " + String.format("%.5f", meanTime/1e9));
+			System.out.println("Standard deviation (s): " + String.format("%.5f", (Math.sqrt(sdTime / nTests)/1e9)));
 			System.out.println("Min MDS: " + minSet);
 			System.out.println("Max MDS: " + maxSet);
-			System.out.println("Mean MDS: " + String.format("%.3f", meanSize));
-			System.out.println("Standard deviation MDS: " + String.format("%.3f", Math.sqrt(sdSize / nTests)));
+			System.out.println("Mean MDS: " + String.format("%.2f", meanSize));
+			System.out.println("Standard deviation MDS: " + String.format("%.2f", Math.sqrt(sdSize / nTests)));
 			line = in.readLine();
 		}
 		System.out.println("\nEnd");
