@@ -26,7 +26,7 @@ public class Greedy {
 	 * Each vertex in the graph has an integer value that represents its weight, and
 	 * a boolean value that indicate if it is already covered.
 	 */
-	HashMap<Integer, Integer> weights;
+	private HashMap<Integer, Integer> weights;
 	private HashMap<Integer, Boolean> covered;
 
 	/**
