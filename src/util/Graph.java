@@ -4,12 +4,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import javafx.util.Pair;
 
 /**
  * This class represents an graph
@@ -24,13 +22,8 @@ public class Graph {
 	// Graph
 	private HashMap<Integer, Set<Integer>> graph;
 	
-	// edges list
-	LinkedList<Pair<Integer,Integer>> edges;
-	
-	
 	public Graph() {
 		graph = new HashMap<>();
-		edges = new LinkedList<>();
 	}
 
 	public void addNode(int node) {

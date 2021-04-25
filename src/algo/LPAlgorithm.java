@@ -1,12 +1,9 @@
 package algo;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import javafx.util.Pair;
 import scpsolver.constraints.LinearBiggerThanEqualsConstraint;
 import scpsolver.lpsolver.LinearProgramSolver;
 import scpsolver.lpsolver.SolverFactory;

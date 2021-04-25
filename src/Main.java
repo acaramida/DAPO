@@ -43,8 +43,10 @@ public class Main {
 				// start timer
 				startTime = System.nanoTime();
 				// Greedy Search
-				//int size = new Greedy().run(graph);
-				int size = LPAlgorithm.run(graph);
+				int size = new Greedy().run(graph);
+				
+				//LP search
+				//int size = LPAlgorithm.run(graph);
 				// end timer
 				endTime = System.nanoTime();
 				// save and calc data for prints
@@ -71,7 +73,7 @@ public class Main {
 			}
 
 			System.out.println();
-			System.out.println("LP " + file.getName() + " " + nTests + " runs.");
+			System.out.println("Greedy " + file.getName() + " " + nTests + " runs.");
 			System.out.println("Mean time (s): " + String.format("%.5f", meanTime/1e9));
 			System.out.println("Standard deviation (s): " + String.format("%.5f", (Math.sqrt(sdTime / nTests)/1e9)));
 			System.out.println("Min MDS: " + minSet);
