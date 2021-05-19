@@ -15,8 +15,7 @@ import util.Graph;
 /**
  * Class for the Greedy algorithm
  * 
- * Removed unused methods and changed the run method to return only the size of
- * the dominating set, original on git link below
+ * Removed unused methods original on git link below
  * 
  * @author https://github.com/JavaZakariae/MinDominatingSet
  */
@@ -101,7 +100,7 @@ public class Greedy {
 	 *
 	 * @return the size of mds of the graph instance
 	 */
-	public int run(Graph graph) {
+	public Set<Integer> run(Graph graph) {
 		Set<Integer> mds = new HashSet<>();
 		// initialisation
 		for (Integer key : graph.getGraph().keySet()) {
@@ -118,7 +117,7 @@ public class Greedy {
 			}
 		} while (v != -1);
 
-		return mds.size();
+		return mds;
 	}
 
 }

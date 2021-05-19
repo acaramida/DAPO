@@ -1,0 +1,28 @@
+<CometProject>
+    <CometFiles>
+        <CometFile default="true" id="0">
+            <Path type="relative">mds.co</Path>
+        </CometFile>
+        <CometFile default="false" id="1">
+            <Path type="relative">file_io.co</Path>
+        </CometFile>
+    </CometFiles>
+    <DataFiles/>
+    <Breakpoints>
+        <Breakpoint line="6" active="false" id="2">
+            <Path type="absolute">C:/Users/Alex/Desktop/cadeiras/DAPO/Labs/p07/mds.co</Path>
+        </Breakpoint>
+        <Breakpoint line="12" active="false" id="3">
+            <Path type="relative">file_io.co</Path>
+        </Breakpoint>
+        <Breakpoint line="18" active="false" id="4">
+            <Path type="relative">file_io.co</Path>
+        </Breakpoint>
+        <Breakpoint line="41" active="false" id="5">
+            <Path type="relative">mds.co</Path>
+        </Breakpoint>
+        <Breakpoint line="27" active="false" id="6">
+            <Path type="relative">mds.co</Path>
+        </Breakpoint>
+    </Breakpoints>
+</CometProject>

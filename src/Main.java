@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Set;
 
 import algo.Greedy;
 import algo.LPAlgorithm;
@@ -38,12 +39,22 @@ public class Main {
 			Graph graph = new Graph();
 			// Load the graph
 			createGraph(graph, file);
-
+			
 			for (int i = 0; i < nTests; i++) {
 				// start timer
 				startTime = System.nanoTime();
 				// Greedy Search
-				int size = new Greedy().run(graph);
+				Set<Integer> mdsSet = new Greedy().run(graph);
+				int size = mdsSet.size();
+				
+				String set = "----MDS: [";
+
+				Object[] aux = mdsSet.toArray();
+				for (int j = 0; j < size; j++)
+					if(j != size - 1)
+						set = set + (aux[j].toString()) + ",";
+					else set = set + (aux[j].toString());
+				System.out.println(set + "]");
 				
 				//LP search
 				//int size = LPAlgorithm.run(graph);
