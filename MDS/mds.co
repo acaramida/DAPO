@@ -2,64 +2,68 @@ import cotls;
 include "file_io";
 pragma mode = randomized;
 
-string fname = "david.col";
+string fname = "gplus_10000.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
-showMat(mat);
+//showMat(mat);
 
 int n = mat.getSize(0);
-range N = 1..n;
+range Vertices = 1..n;
 range D = 0..1;
+int maxAdj[Vertices] = 0;
+bool covered[Vertices] = false;
 
 UniformDistribution dist(D);
-
-// return vertex that can cover the most vertices
-function int getMax(var{int}[] covered, int N, int[,] mat, var{int}[] weight) {
-   
-   return 1;
-}
+RandomPermutation perm(Vertices);
 
 Solver<LS> ls();
-
-   var{int} weight[i in N] (ls, N) := 0;
-   forall (i in N, j in N: mat[i, j] == 1){
-      weight[i] := weight[i] + 1;
+   // calc max adj for every v
+   forall(i in Vertices, j in Vertices: mat[i, j] > 0){
+      maxAdj[i] += 1;
    }
-
-   // minimum dominating set, 1 means vertex belongs to mds 0 it doesnt
-   var{int} mds[i in N] (ls, D) := dist.get();
-
-   // set of vertices, 1 means vertex its covered 0 its not
-   var{int} c[i in N] (ls, D) := 0;
-  /* forall (i in N, j in N: j > i && mat[i, j] == 1 && (mds[i] == 1 || mds[j] == 1) ){
-      c[i] := 1;
-      c[j] := 1;
+   // 1 means vertex belongs to mds, 0 it doesnt
+   /*var{int} minSet[i in Vertices] (ls, D) := dist.get();
+   forall(i in Vertices: minSet[i] == 1){
+      covered[i] = true;
+      forall(w in Vertices: mat[i, w] > 0){
+         covered[w] = true;
+         minSet[w] := 0;
+      }
    }*/
 
-   // all vertices need to be covered
-   ConstraintSystem<LS> C(ls);
-      forall (i in N) {
-         C.post(c[i] == 1);
-      }
-   ConstraintSystem<LS> S(ls);
-      forall (i in N) {
-         S.post(mds[i] == 0);
-      }
-   
+   var{int} minSet[i in Vertices] (ls, D) := 0;
+   int v = perm.get();
+   minSet[v] := 1;
+   covered[v] = true;
 
+   forall(w in Vertices: mat[v, w] > 0){
+      covered[w] = true;
+      minSet[w] := 0;
+   }
+
+   forall(i in Vertices: !covered[i]){   
+      minSet[i] := 1;
+      covered[i] = true;
+      forall(w in Vertices: mat[i, w] > 0 && !covered[w]){
+         covered[w] = true;
+         minSet[w] := 0;
+      }
+   }
+    
 ls.close();
 
 int maxit = 100*n;
 int it = 0;
-while(it < maxit && C.violations() > 0) {
-   //TODO
-   it = it + 1;
-}
+//while(it < maxit) {
+      
+
+   //it++;
+//}
 
 cout << " ----------- " << endl;
-/*cout << " vertex covered: " << c << endl;
-cout << " with violations = "<< C.violations() << endl;
-cout << " mds: " << mds << endl;
-cout << " size: "<< S.violations() << endl;*/
-cout << weight << endl;
-cout << "size: " << weight.getSize() << endl;
+cout << " max: " << max(i in Vertices) (maxAdj[i]) << endl;
+cout << " mds: " << minSet << endl;
+cout << " size: "<< sum(i in Vertices) (minSet[i] == 1) << endl;
+cout << " covered: "<< sum(i in Vertices) (covered[i] == true) << endl;
+//cout << weight << endl;
+//cout << "size: " << weight.getSize() << endl;

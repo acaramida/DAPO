@@ -1,4 +1,37 @@
 <CometProject>
-    <CometFiles/>
+    <CometFiles>
+        <CometFile default="false" id="0">
+            <Path type="relative">file_io.co</Path>
+        </CometFile>
+        <CometFile default="true" id="1">
+            <Path type="relative">mds.co</Path>
+        </CometFile>
+    </CometFiles>
     <DataFiles/>
+    <Breakpoints>
+        <Breakpoint line="33" active="false" id="2">
+            <Path type="relative">mds.co</Path>
+        </Breakpoint>
+        <Breakpoint line="14" active="false" id="3">
+            <Path type="relative">mds.co</Path>
+        </Breakpoint>
+        <Breakpoint line="28" active="false" id="4">
+            <Path type="relative">mds.co</Path>
+        </Breakpoint>
+        <Breakpoint line="24" active="false" id="5">
+            <Path type="relative">mds.co</Path>
+        </Breakpoint>
+        <Breakpoint line="26" active="false" id="6">
+            <Path type="relative">mds.co</Path>
+        </Breakpoint>
+        <Breakpoint line="46" active="false" id="7">
+            <Path type="relative">mds.co</Path>
+        </Breakpoint>
+        <Breakpoint line="45" active="false" id="8">
+            <Path type="relative">mds.co</Path>
+        </Breakpoint>
+        <Breakpoint line="44" active="false" id="9">
+            <Path type="relative">mds.co</Path>
+        </Breakpoint>
+    </Breakpoints>
 </CometProject>

@@ -39,25 +39,30 @@ public class Main {
 			Graph graph = new Graph();
 			// Load the graph
 			createGraph(graph, file);
-			
+			String algo = "LP";
 			for (int i = 0; i < nTests; i++) {
 				// start timer
 				startTime = System.nanoTime();
-				// Greedy Search
-				Set<Integer> mdsSet = new Greedy().run(graph);
-				int size = mdsSet.size();
+				int size = 0;
 				
-				String set = "----MDS: [";
+				// Greedy Search
+				if(algo == "Greedy") {
+					Set<Integer> mdsSet = new Greedy().run(graph);
+					size = mdsSet.size();
+				}else {
+					//LP search
+					size = LPAlgorithm.run(graph);
+				}
+				
+				/*String set = "----MDS: [";
 
 				Object[] aux = mdsSet.toArray();
 				for (int j = 0; j < size; j++)
 					if(j != size - 1)
 						set = set + (aux[j].toString()) + ",";
 					else set = set + (aux[j].toString());
-				System.out.println(set + "]");
+				System.out.println(set + "]");*/
 				
-				//LP search
-				//int size = LPAlgorithm.run(graph);
 				// end timer
 				endTime = System.nanoTime();
 				// save and calc data for prints
@@ -84,7 +89,7 @@ public class Main {
 			}
 
 			System.out.println();
-			System.out.println("Greedy " + file.getName() + " " + nTests + " runs.");
+			System.out.println(algo + " " + file.getName() + " " + nTests + " runs.");
 			System.out.println("Mean time (s): " + String.format("%.5f", meanTime/1e9));
 			System.out.println("Standard deviation (s): " + String.format("%.5f", (Math.sqrt(sdTime / nTests)/1e9)));
 			System.out.println("Min MDS: " + minSet);
@@ -114,6 +119,12 @@ public class Main {
 			do {
 				line = reader.readLine();
 			} while (line.charAt(0) != 'p');
+			
+			String[] aux = line.split(" ");
+			int points = Integer.parseInt(aux[2]);
+			for(int i = 1; i <= points; i++)
+				g.addNode(i);
+					
 			while ((line = reader.readLine()) != null) {
 				String[] edge = line.split(" ");
 				addEdge(g, edge);
@@ -136,8 +147,6 @@ public class Main {
 	public static void addEdge(Graph g, String[] line) {
 		int u = Integer.parseInt(line[1]);
 		int v = Integer.parseInt(line[2]);
-		g.addNode(u);
-		g.addNode(v);
 		g.addEdge(u, v);
 	}
 
