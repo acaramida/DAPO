@@ -2,18 +2,18 @@ import cotls;
 include "file_io";
 pragma mode = randomized;
 
-string fname = "gplus_10000.col";
+string fname = "huck.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
 //showMat(mat);
 
 int n = mat.getSize(0);
 range Vertices = 1..n;
-range D = 0..1;
 int maxAdj[Vertices] = 0;
-bool covered[Vertices] = false;
+range D = 0..1;
+int ratio = 2;
 
-UniformDistribution dist(D);
+//UniformDistribution dist(D);
 RandomPermutation perm(Vertices);
 
 Solver<LS> ls();
@@ -21,49 +21,56 @@ Solver<LS> ls();
    forall(i in Vertices, j in Vertices: mat[i, j] > 0){
       maxAdj[i] += 1;
    }
-   // 1 means vertex belongs to mds, 0 it doesnt
-   /*var{int} minSet[i in Vertices] (ls, D) := dist.get();
-   forall(i in Vertices: minSet[i] == 1){
-      covered[i] = true;
-      forall(w in Vertices: mat[i, w] > 0){
-         covered[w] = true;
-         minSet[w] := 0;
-      }
-   }*/
 
-   var{int} minSet[i in Vertices] (ls, D) := 0;
-   int v = perm.get();
-   minSet[v] := 1;
-   covered[v] = true;
+   var{int} c[i in Vertices] (ls, D) := 0;
+   ConstraintSystem<LS> C(ls);
 
-   forall(w in Vertices: mat[v, w] > 0){
-      covered[w] = true;
-      minSet[w] := 0;
-   }
+   var{int} s[i in Vertices] (ls, D) := 0;   
+   int aux = perm.get();
+   s[aux] := 1;
 
-   forall(i in Vertices: !covered[i]){   
-      minSet[i] := 1;
-      covered[i] = true;
-      forall(w in Vertices: mat[i, w] > 0 && !covered[w]){
-         covered[w] = true;
-         minSet[w] := 0;
+   forall (i in Vertices) {
+      C.post( c[i] == 1 );
+      forall (w in Vertices: mat[i, w] > 0) {
+         C.post(s[i] == 1 || s[w] == 1);
       }
    }
+
+   
+   forall (w in Vertices: mat[aux, w] > 0) {
+      c[w] := 1;
+   }
+
+   var{int} violations = C.violations();
+   FunctionExpr<LS> F( sum (v in Vertices) (s[v] == 1) );
+   Function<LS> G = ratio * C + F;
     
 ls.close();
 
-int maxit = 100*n;
+int maxit = 10*n;
 int it = 0;
-//while(it < maxit) {
-      
 
-   //it++;
-//}
+while(it < maxit && violations > 0) {
+
+   selectMax (i in Vertices) (G.decrease(s[i]))
+   selectMin (d in D) (G.getAssignDelta(s[i],d)){
+         s[i] := d;
+         c[i] := d;
+
+         forall (w in Vertices: mat[i, w] > 0 && c[w] == 0) {
+             c[w] := d;
+         }
+         
+         cout << " change var " << i << " to "<< d << endl;  
+         cout << "-- iteration = " << it << "; violations = " << violations <<endl;
+      }
+
+   it++;
+}
 
 cout << " ----------- " << endl;
-cout << " max: " << max(i in Vertices) (maxAdj[i]) << endl;
-cout << " mds: " << minSet << endl;
-cout << " size: "<< sum(i in Vertices) (minSet[i] == 1) << endl;
-cout << " covered: "<< sum(i in Vertices) (covered[i] == true) << endl;
-//cout << weight << endl;
-//cout << "size: " << weight.getSize() << endl;
+//cout << " adj: "<< maxAdj << endl;
+cout << " set: "<< s << endl;
+cout << " cov: "<< c << endl;
+cout << " mds: "<< sum(i in Vertices)(s[i] == 1) << endl;
+cout << " covered: "<< sum(i in Vertices)(c[i] == 1) << endl;
