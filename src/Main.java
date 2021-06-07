@@ -39,7 +39,7 @@ public class Main {
 			Graph graph = new Graph();
 			// Load the graph
 			createGraph(graph, file);
-			String algo = "LP";
+			String algo = "LP"; // "Greedy" for greedy algo "LP" for linear program algo
 			for (int i = 0; i < nTests; i++) {
 				// start timer
 				startTime = System.nanoTime();
