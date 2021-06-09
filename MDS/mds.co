@@ -2,75 +2,50 @@ import cotls;
 include "file_io";
 pragma mode = randomized;
 
-string fname = "huck.col";
+string fname = "david.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
 //showMat(mat);
 
 int n = mat.getSize(0);
 range Vertices = 1..n;
-int maxAdj[Vertices] = 0;
 range D = 0..1;
-int ratio = 2;
+int ratio = 1;
 
-//UniformDistribution dist(D);
-RandomPermutation perm(Vertices);
+UniformDistribution dist(D);
 
 Solver<LS> ls();
-   // calc max adj for every v
-   forall(i in Vertices, j in Vertices: mat[i, j] > 0){
-      maxAdj[i] += 1;
+   ConstraintSystem<LS> S(ls);
+   var{int} s[i in Vertices] (ls, D) := dist.get();
+
+   forall (i in Vertices, w in Vertices: mat[i, w] > 0) {
+      S.post(s[i] + s[w] > 0);
    }
 
-   var{int} c[i in Vertices] (ls, D) := 0;
-   ConstraintSystem<LS> C(ls);
-
-   var{int} s[i in Vertices] (ls, D) := 0;   
-   int aux = perm.get();
-   s[aux] := 1;
-
-   forall (i in Vertices) {
-      C.post( c[i] == 1 );
-      forall (w in Vertices: mat[i, w] > 0) {
-         C.post(s[i] == 1 || s[w] == 1);
-      }
-   }
-
-   
-   forall (w in Vertices: mat[aux, w] > 0) {
-      c[w] := 1;
-   }
-
-   var{int} violations = C.violations();
-   FunctionExpr<LS> F( sum (v in Vertices) (s[v] == 1) );
-   Function<LS> G = ratio * C + F;
+   var{int} violations = S.violations();
+   FunctionExpr<LS> F( sum (v in Vertices) s[v] );
+   Function<LS> G = ratio * S + F;
     
 ls.close();
 
-int maxit = 10*n;
+int maxit = 100*n;
 int it = 0;
 
+int t1 = System.getCPUTime();
+
 while(it < maxit && violations > 0) {
+      selectMin(i in Vertices) (G.getAssignDelta(s[i], 1-s[i])){
+         s[i] := 1-s[i];
 
-   selectMax (i in Vertices) (G.decrease(s[i]))
-   selectMin (d in D) (G.getAssignDelta(s[i],d)){
-         s[i] := d;
-         c[i] := d;
-
-         forall (w in Vertices: mat[i, w] > 0 && c[w] == 0) {
-             c[w] := d;
-         }
-         
-         cout << " change var " << i << " to "<< d << endl;  
+         cout << " change var " << i << " to "<< 1-s[i] << endl;  
          cout << "-- iteration = " << it << "; violations = " << violations <<endl;
+      
       }
-
    it++;
 }
+int t2 = System.getCPUTime();
 
 cout << " ----------- " << endl;
-//cout << " adj: "<< maxAdj << endl;
 cout << " set: "<< s << endl;
-cout << " cov: "<< c << endl;
 cout << " mds: "<< sum(i in Vertices)(s[i] == 1) << endl;
-cout << " covered: "<< sum(i in Vertices)(c[i] == 1) << endl;
+cout << "cpu time (ms) = " << t2-t1 <<endl;
