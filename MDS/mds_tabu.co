@@ -2,7 +2,7 @@ import cotls;
 include "file_io";
 pragma mode = randomized;
 
-string fname = "pokec_500.col";
+string fname = "pokec_2000.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
 //showMat(mat);
@@ -20,57 +20,44 @@ Solver<LS> ls();
       S.post(s[i] + s[w] > 0);
    }
 
-   var{int} violations = S.violations();
-
    FunctionExpr<LS> F( sum (v in Vertices) s[v] );
    
-   Function<LS> G = 2*S + F;
+   Function<LS> G = 3*S + 2*F;
+
+   var{int} violations = S.violations();
     
 ls.close();
 
 int it = 0;
-int best_v = violations; int best_s; int best_it;
-int tbl = 3; int tblMin = 2; int tblMax = 10; int tabu[Vertices] = 0;
-Solution solution(ls);
-int nonImprovingSteps = 0; int maxNonImproving = 100; int restartFreq = n/2;
-
+int best = violations;
+int tbl = 4; int tblMin = 2; int tblMax = 8; int tabu[Vertices] = 0;
 int t1 = System.getCPUTime();
-
 while(violations > 0) {
+   int restart;
    int old = violations;
-   selectMin(i in Vertices, delta = G.getAssignDelta(s[i], 1-s[i]): tabu[i] <= it || delta + violations < best_v) (delta){
+   selectMin(i in Vertices, delta = G.getAssignDelta(s[i], 1-s[i]): tabu[i] <= it || delta + violations < best) (delta){
       tabu[i] = it + tbl;
       s[i] := 1-s[i];
-
+      restart = delta;
       if (violations < old && tbl > tblMin)
          tbl--;
       if (violations >= old && tbl < tblMax)
          tbl++;
 
       cout << " change var " << i << " to "<< 1-s[i] <<"; delta = "<< delta << endl;  
-      cout << "-- iteration = " << it << "; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
+      cout << "-- iteration = " << it << "; violations = " << S.violations() <<"; set size = "<< F.evaluation() << endl;
    
    }
-
-   if (violations < best_v){
-      best_v = violations;
-      best_s = F.evaluation();
-      best_it = it;
-      solution = new Solution(ls);
-      nonImprovingSteps = 0;
+   
+   if (violations < best){
+      best = violations;
    } 
-   else if (nonImprovingSteps == maxNonImproving) {
-      solution.restore();
-      nonImprovingSteps = 0;
-   }
-   else nonImprovingSteps++;
 
-   if ((it % restartFreq == 0) && (best_v > 0)) {
+   if (restart >= 0 && best > 0) {
       with delay(ls)
-          forall (i in Vertices)
-             s[i] := dist.get();
-      best_v = violations;
-      solution = new Solution(ls);
+         forall (i in Vertices)
+            s[i] := dist.get();
+     best = violations;
    }
    it++;
 }
