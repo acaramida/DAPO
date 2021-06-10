@@ -1,0 +1,81 @@
+import cotls;
+include "file_io";
+pragma mode = randomized;
+
+string fname = "pokec_500.col";
+string directory = "../tests/";
+int[,] mat = readDimacsGraph(directory + fname);
+//showMat(mat);
+
+int n = mat.getSize(0);
+range Vertices = 1..n;
+range D = 0..1;
+
+UniformDistribution dist(D);
+
+Solver<LS> ls();
+   ConstraintSystem<LS> S(ls);
+   var{int} s[i in Vertices] (ls, D) := dist.get();
+   forall (i in Vertices, w in Vertices: mat[i, w] > 0) {
+      S.post(s[i] + s[w] > 0);
+   }
+
+   var{int} violations = S.violations();
+
+   FunctionExpr<LS> F( sum (v in Vertices) s[v] );
+   
+   Function<LS> G = 2*S + F;
+    
+ls.close();
+
+int it = 0;
+int best_v = violations; int best_s; int best_it;
+int tbl = 3; int tblMin = 2; int tblMax = 10; int tabu[Vertices] = 0;
+Solution solution(ls);
+int nonImprovingSteps = 0; int maxNonImproving = 100; int restartFreq = n/2;
+
+int t1 = System.getCPUTime();
+
+while(violations > 0) {
+   int old = violations;
+   selectMin(i in Vertices, delta = G.getAssignDelta(s[i], 1-s[i]): tabu[i] <= it || delta + violations < best_v) (delta){
+      tabu[i] = it + tbl;
+      s[i] := 1-s[i];
+
+      if (violations < old && tbl > tblMin)
+         tbl--;
+      if (violations >= old && tbl < tblMax)
+         tbl++;
+
+      cout << " change var " << i << " to "<< 1-s[i] <<"; delta = "<< delta << endl;  
+      cout << "-- iteration = " << it << "; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
+   
+   }
+
+   if (violations < best_v){
+      best_v = violations;
+      best_s = F.evaluation();
+      best_it = it;
+      solution = new Solution(ls);
+      nonImprovingSteps = 0;
+   } 
+   else if (nonImprovingSteps == maxNonImproving) {
+      solution.restore();
+      nonImprovingSteps = 0;
+   }
+   else nonImprovingSteps++;
+
+   if ((it % restartFreq == 0) && (best_v > 0)) {
+      with delay(ls)
+          forall (i in Vertices)
+             s[i] := dist.get();
+      best_v = violations;
+      solution = new Solution(ls);
+   }
+   it++;
+}
+
+int t2 = System.getCPUTime();
+
+cout << " ----------- " << endl;
+cout << "cpu time (ms) = " << t2-t1 <<endl;
