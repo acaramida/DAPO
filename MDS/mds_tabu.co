@@ -41,14 +41,16 @@ Solver<LS> ls();
     
 ls.close();
 
-int maxit = 10*n;
+int maxit = 5*n;
 int it = 0;
 int best = violations; int best_s = F.evaluation(); int best_it = it;
 int tbl = 4; int tblMin = 2; int tblMax = 10; int tabu[Vertices] = 0;
 Solution solution(ls);
 int nonImprovingSteps = 0; int maxNonImproving = 100; int restartFreq = 1000;
 
+
 int t1 = System.getCPUTime();
+cout << "-- iteration start; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
 while(it < maxit && violations > 0) {
    int old = violations;
    /**
@@ -57,6 +59,7 @@ while(it < maxit && violations > 0) {
       only non-tabu assignments are considered.
    */
    selectMin(i in Vertices, delta = G.getAssignDelta(s[i], 1-s[i]): tabu[i] <= it || delta + violations < best) (delta){
+      //update tabu and s[i] 
       tabu[i] = it + tbl;
       s[i] := 1-s[i];
 
@@ -66,7 +69,7 @@ while(it < maxit && violations > 0) {
       if (violations >= old && tbl < tblMax)
          tbl++;
 
-      cout << " change var " << i << " to "<< 1-s[i] <<"; delta = "<< delta << endl;  
+      cout << " change var " << i << " to "<< s[i] <<"; delta = "<< delta << endl;  
       cout << "-- iteration = " << it << "; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
    
    }
@@ -100,7 +103,7 @@ while(it < maxit && violations > 0) {
       Check if restartFreq is reached and no solution found
       change a random vertex to inverse (0 to 1, 1 to 0)
    */
-   if ((it % restartFreq == 0) && (best > 0)) {
+   if (it !=0 && (it % restartFreq == 0) && (best > 0)) {
       int v = dist.get();
       s[v] := 1-s[v];
       best = S.violations();

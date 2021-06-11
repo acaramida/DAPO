@@ -42,17 +42,18 @@ Solver<LS> ls();
     
 ls.close();
 
-int maxit = 100*n;
+int maxit = 5*n;
 int it = 0;
 int best = violations; int best_s = F.evaluation(); int best_it = it;
 int t1 = System.getCPUTime();
 
+cout << "-- iteration start; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
 while(it < maxit && violations > 0) {
    selectMin(i in Vertices) (G.getAssignDelta(s[i], 1-s[i])){
       s[i] := 1-s[i];
 
-     cout << " change var " << i << " to "<< 1-s[i] << endl;  
-     cout << "-- iteration = " << it << "; violations = " << violations <<endl;
+     cout << " change var " << i << " to "<< s[i] << endl;  
+     cout << "-- iteration = " << it << "; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
       
    }
 
