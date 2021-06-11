@@ -2,7 +2,8 @@ import cotls;
 include "file_io";
 pragma mode = randomized;
 
-string fname = "gplus_10000.col";
+int t1 = System.getCPUTime();
+string fname = "gplus_2000.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
 //showMat(mat);
@@ -10,8 +11,6 @@ int[,] mat = readDimacsGraph(directory + fname);
 int n = mat.getSize(0);
 range Vertices = 1..n;
 range D = 0..1;
-
-UniformDistribution dist(Vertices);
 
 Solver<LS> ls();
    ConstraintSystem<LS> S(ls);
@@ -23,7 +22,8 @@ Solver<LS> ls();
    var{int} s[i in Vertices] (ls, D) := 0;
 
    //start with a random vertex set to 1
-   s[dist.get()] := 1;
+   select(v in Vertices)
+         s[v] := 1;
 
    /**
       For every vertex that is covered it needs to be in the set
@@ -35,23 +35,23 @@ Solver<LS> ls();
 
    FunctionExpr<LS> F( sum (v in Vertices) s[v] );
 
-   Function<LS> G = S + F;
+   Function<LS> G = 11*S + 10*F;
 
    var{int} violations = S.violations();
     
 ls.close();
 
-int maxit = 5*n;
+int maxit = 2*n;
 int it = 0;
-int best = violations; int best_s = F.evaluation(); int best_it = it;
+int change = 0;
+int max_change = n/2;
+int best = violations; int best_s = n; int best_it = it;
 int tbl = 4; int tblMin = 2; int tblMax = 10; int tabu[Vertices] = 0;
 Solution solution(ls);
 int nonImprovingSteps = 0; int maxNonImproving = 100; int restartFreq = 1000;
 
-
-int t1 = System.getCPUTime();
 cout << "-- iteration start; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
-while(it < maxit && violations > 0) {
+while(it < maxit && change < max_change) {
    int old = violations;
    /**
       choose the vertex that leads to the smallest number of violations (the minimal
@@ -78,7 +78,7 @@ while(it < maxit && violations > 0) {
       the Solution object solution, variable best is updated to reflect the new best number of violations,
       and the number of non-improving iterations is reset to 0
    */
-   if (violations < best){
+   if (violations < best || (violations == 0 && F.evaluation() < best_s)){
       best = violations;
       best_s = F.evaluation();
       best_it = it;
@@ -103,12 +103,15 @@ while(it < maxit && violations > 0) {
       Check if restartFreq is reached and no solution found
       change a random vertex to inverse (0 to 1, 1 to 0)
    */
-   if (it !=0 && (it % restartFreq == 0) && (best > 0)) {
-      int v = dist.get();
-      s[v] := 1-s[v];
+   if (it !=0 && (it % restartFreq == 0) && (best > 0) ) {
+      // change a randomm vertex
+      select(v in Vertices)
+         s[v] := 1-s[v];
       best = S.violations();
+      best_s = F.evaluation();
       solution = new Solution(ls);
-   } 
+   } else
+      change= change + 1;
 
    it++;
 }

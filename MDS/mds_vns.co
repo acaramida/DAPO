@@ -3,7 +3,7 @@ include "file_io";
 pragma mode = randomized;
 
 int t1 = System.getCPUTime();
-string fname = "gplus_10000.col";
+string fname = "gplus_2000.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
 //showMat(mat);
@@ -12,10 +12,7 @@ int n = mat.getSize(0);
 range Vertices = 1..n;
 range D = 0..1;
 
-UniformDistribution dist(Vertices);
-
 Solver<LS> ls();
-
    ConstraintSystem<LS> S(ls);
    /**
       Array of all vertices with values 0 or 1
@@ -25,7 +22,8 @@ Solver<LS> ls();
    var{int} s[i in Vertices] (ls, D) := 0;
 
    //start with a random vertex set to 1
-   s[dist.get()] := 1;
+   select(v in Vertices)
+         s[v] := 1;
 
    /**
       For every vertex that is covered it needs to be in the set
@@ -42,26 +40,41 @@ Solver<LS> ls();
    var{int} violations = S.violations();
     
 ls.close();
+int d = 1;
+int sol[Vertices];
 
 int maxit = 2*n;
+int max_change = n/2;
 int it = 0;
 int best = violations; int best_s = n; int best_it = it;
 
-cout << "-- iteration start; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
-while(it < maxit && violations > 0) {
-   selectMin(i in Vertices) (G.getAssignDelta(s[i], 1-s[i])){
-      s[i] := 1-s[i];
-
-     cout << " change var " << i << " to "<< s[i] << endl;  
-     cout << "-- iteration = " << it << "; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
-      
+while(it < maxit && d <= max_change) {
+// diversify - select a new neighbourhood
+   forall(i in 1..d)
+      select(v in Vertices){
+         s[v] := 1-s[v];
+      }
+// greedy search for a local optimum
+   bool improvement = true;
+   while (improvement) {
+      selectMin(i in Vertices, delta = G.getAssignDelta(s[i], 1-s[i])) (delta){
+         if (delta < 0){
+            s[i] := 1-s[i];
+         } else
+            improvement = false;
+         }
+      it = it + 1;
    }
-
+// keep best prepare diversification
    if (violations < best || (violations == 0 && F.evaluation() < best_s)){
+      d = 1;
       best = violations;
       best_s = F.evaluation();
       best_it = it;
-   }
+      forall(i in Vertices) sol[i] = s[i];
+      cout << "best so far of " << best << " with size " << best_s <<" at iteration " << best_it << endl;endl;
+   } else
+      d = d + 1;
  
    it++;
 }
@@ -71,4 +84,4 @@ cout << " ----------- " << endl;
 cout << " best iteration : "<< best_it << endl;
 cout << " best violations : "<< best << endl;
 cout << " best mds : "<< best_s << endl;
-cout << "cpu time (ms) = " << t2-t1 <<endl;
+cout << " cpu time (ms) = " << t2-t1 <<endl;
