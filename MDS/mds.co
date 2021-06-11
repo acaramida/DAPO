@@ -2,7 +2,7 @@ import cotls;
 include "file_io";
 pragma mode = randomized;
 
-string fname = "david.col";
+string fname = "gplus_10000.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
 //showMat(mat);
@@ -10,42 +10,54 @@ int[,] mat = readDimacsGraph(directory + fname);
 int n = mat.getSize(0);
 range Vertices = 1..n;
 range D = 0..1;
-int ratio = 1;
 
-UniformDistribution dist(D);
+UniformDistribution dist(Vertices);
 
 Solver<LS> ls();
-   ConstraintSystem<LS> S(ls);
-   var{int} s[i in Vertices] (ls, D) := dist.get();
 
-   forall (i in Vertices, w in Vertices: mat[i, w] > 0) {
-      S.post(s[i] + s[w] > 0);
+   ConstraintSystem<LS> S(ls);
+   // start with a random vertex in the set
+   var{int} s[i in Vertices] (ls, D) := 0;
+   s[dist.get()] := 1;
+
+   //for every vertex to be covered it needs to be in the set or have a neighbour that is
+   forall (i in Vertices) {
+      S.post(1 <= s[i] + sum(j in Vertices:  mat[i, j] > 0) (s[j]) );
    }
 
    var{int} violations = S.violations();
    FunctionExpr<LS> F( sum (v in Vertices) s[v] );
-   Function<LS> G = ratio * S + F;
+   // 3 to 2 ratio (1.5) needed for bigger files(10000 vertices) to reach a solution
+   Function<LS> G = 3*S + 2*F;
     
 ls.close();
 
 int maxit = 100*n;
 int it = 0;
-
+int best = violations; int best_s = F.evaluation(); int best_it = it;
 int t1 = System.getCPUTime();
 
 while(it < maxit && violations > 0) {
-      selectMin(i in Vertices) (G.getAssignDelta(s[i], 1-s[i])){
-         s[i] := 1-s[i];
+   selectMin(i in Vertices) (G.getAssignDelta(s[i], 1-s[i])){
+      s[i] := 1-s[i];
 
-         cout << " change var " << i << " to "<< 1-s[i] << endl;  
-         cout << "-- iteration = " << it << "; violations = " << violations <<endl;
+     cout << " change var " << i << " to "<< 1-s[i] << endl;  
+     cout << "-- iteration = " << it << "; violations = " << violations <<endl;
       
-      }
+   }
+
+   if (violations < best){
+      best = violations;
+      best_s = F.evaluation();
+      best_it = it;
+   }
+ 
    it++;
 }
 int t2 = System.getCPUTime();
 
 cout << " ----------- " << endl;
-cout << " set: "<< s << endl;
-cout << " mds: "<< sum(i in Vertices)(s[i] == 1) << endl;
+cout << " best iteration : "<< best_it << endl;
+cout << " best violations : "<< best << endl;
+cout << " best mds : "<< best_s << endl;
 cout << "cpu time (ms) = " << t2-t1 <<endl;

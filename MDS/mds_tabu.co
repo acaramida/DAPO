@@ -2,7 +2,7 @@ import cotls;
 include "file_io";
 pragma mode = randomized;
 
-string fname = "pokec_2000.col";
+string fname = "gplus_500.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
 //showMat(mat);
@@ -11,58 +11,62 @@ int n = mat.getSize(0);
 range Vertices = 1..n;
 range D = 0..1;
 
-UniformDistribution dist(D);
+UniformDistribution dist(Vertices);
 
 Solver<LS> ls();
    ConstraintSystem<LS> S(ls);
-   var{int} s[i in Vertices] (ls, D) := dist.get();
-   forall (i in Vertices, w in Vertices: mat[i, w] > 0) {
-      S.post(s[i] + s[w] > 0);
+   // start with a random vertex in the set
+   var{int} s[i in Vertices] (ls, D) := 0;
+   s[dist.get()] := 1;
+
+   //for every vertex to be covered it needs to be in the set or have a neighbour that is
+   forall (i in Vertices) {
+      S.post(1 <= s[i] + sum(j in Vertices:  mat[i, j] > 0) (s[j]) );
    }
 
    FunctionExpr<LS> F( sum (v in Vertices) s[v] );
-   
+   // 3 to 2 ratio (1.5) needed for bigger files(10000 vertices) to reach a solution
    Function<LS> G = 3*S + 2*F;
 
    var{int} violations = S.violations();
     
 ls.close();
 
+int maxit = 10*n;
 int it = 0;
-int best = violations;
-int tbl = 4; int tblMin = 2; int tblMax = 8; int tabu[Vertices] = 0;
+int best = violations; int best_s = F.evaluation(); int best_it = it;
+int tbl = 4; int tblMin = 2; int tblMax = 10; int tabu[Vertices] = 0;
+
 int t1 = System.getCPUTime();
-while(violations > 0) {
-   int restart;
+while(it < maxit && violations > 0) {
    int old = violations;
    selectMin(i in Vertices, delta = G.getAssignDelta(s[i], 1-s[i]): tabu[i] <= it || delta + violations < best) (delta){
       tabu[i] = it + tbl;
       s[i] := 1-s[i];
-      restart = delta;
+
       if (violations < old && tbl > tblMin)
          tbl--;
       if (violations >= old && tbl < tblMax)
          tbl++;
 
       cout << " change var " << i << " to "<< 1-s[i] <<"; delta = "<< delta << endl;  
-      cout << "-- iteration = " << it << "; violations = " << S.violations() <<"; set size = "<< F.evaluation() << endl;
+      cout << "-- iteration = " << it << "; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
    
    }
    
    if (violations < best){
       best = violations;
+      best_s = F.evaluation();
+      best_it = it;
    } 
 
-   if (restart >= 0 && best > 0) {
-      with delay(ls)
-         forall (i in Vertices)
-            s[i] := dist.get();
-     best = violations;
-   }
    it++;
 }
 
 int t2 = System.getCPUTime();
 
 cout << " ----------- " << endl;
+cout << " best iteration : "<< best_it << endl;
+cout << " best violations : "<< best << endl;
+cout << " best mds : "<< best_s << endl;
 cout << "cpu time (ms) = " << t2-t1 <<endl;
