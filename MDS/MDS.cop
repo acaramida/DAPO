@@ -84,5 +84,8 @@
         <Breakpoint line="38" active="false" id="26">
             <Path type="relative">mds_tabu.co</Path>
         </Breakpoint>
+        <Breakpoint line="48" active="false" id="27">
+            <Path type="relative">mds_tabu.co</Path>
+        </Breakpoint>
     </Breakpoints>
 </CometProject>

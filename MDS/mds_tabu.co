@@ -3,7 +3,7 @@ include "file_io";
 pragma mode = randomized;
 
 int t1 = System.getCPUTime();
-string fname = "gplus_2000.col";
+string fname = "gplus_10000.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
 //showMat(mat);
@@ -27,7 +27,8 @@ Solver<LS> ls();
 
    /**
       For every vertex that is covered it needs to be in the set
-      or have a neighbour that is
+      or have a neighbour that is, this means for all vertices of s
+      the sum of the vertex with the sum of all its neighbors has to be 1 or bigger.
    */
    forall (i in Vertices) {
       S.post(1 <= s[i] + sum(j in Vertices:  mat[i, j] > 0) (s[j]) );
@@ -44,13 +45,12 @@ ls.close();
 int maxit = 2*n;
 int it = 0;
 int change = 0;
-int max_change = n/2;
+int max_change = n;
 int best = violations; int best_s = n; int best_it = it;
 int tbl = 4; int tblMin = 2; int tblMax = 10; int tabu[Vertices] = 0;
 Solution solution(ls);
 int nonImprovingSteps = 0; int maxNonImproving = 100; int restartFreq = 1000;
 
-cout << "-- iteration start; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
 while(it < maxit && change < max_change) {
    int old = violations;
    /**
@@ -69,8 +69,8 @@ while(it < maxit && change < max_change) {
       if (violations >= old && tbl < tblMax)
          tbl++;
 
-      cout << " change var " << i << " to "<< s[i] <<"; delta = "<< delta << endl;  
-      cout << "-- iteration = " << it << "; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
+      /*cout << " change var " << i << " to "<< s[i] <<"; delta = "<< delta << endl;  
+      cout << "-- iteration = " << it << "; violations = " << violations <<"; set size = "<< F.evaluation() << endl;*/
    
    }
    /**
@@ -84,7 +84,9 @@ while(it < maxit && change < max_change) {
       best_it = it;
       solution = new Solution(ls);
       nonImprovingSteps = 0;
-   } 
+      if(violations == 0)
+         cout << "best so far of " << best << " with size " << best_s <<" at iteration " << best_it << endl;endl;
+   }
    /** 
        Check if the maximum limit for non-improving iterations has been reached,
        currently best solution, stored in variable solution is restored and the
@@ -97,8 +99,10 @@ while(it < maxit && change < max_change) {
    /**
       Counter for non-improving is increased
    */
-   else
+   else {
       nonImprovingSteps++;
+      change++; 
+   }
    /** 
       Check if restartFreq is reached and no solution found
       change a random vertex to inverse (0 to 1, 1 to 0)
@@ -110,8 +114,7 @@ while(it < maxit && change < max_change) {
       best = S.violations();
       best_s = F.evaluation();
       solution = new Solution(ls);
-   } else
-      change= change + 1;
+   }
 
    it++;
 }

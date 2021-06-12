@@ -29,7 +29,8 @@ Solver<LS> ls();
 
    /**
       For every vertex that is covered it needs to be in the set
-      or have a neighbour that is
+      or have a neighbour that is, this means for all vertices of s
+      the sum of the vertex with the sum of all its neighbors has to be 1 or bigger.
    */
    forall (i in Vertices) {
       S.post(1 <= s[i] + sum(j in Vertices:  mat[i, j] > 0) (s[j]) );
@@ -43,12 +44,12 @@ Solver<LS> ls();
     
 ls.close();
 
-int maxit = 2*n;
+int maxit = n;
 int it = 0;
 int best = violations; int best_s = n; int best_it = it;
 
 cout << "-- iteration start; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
-while(it < maxit && violations > 0) {
+while(it < maxit) {
    selectMin(i in Vertices) (G.getAssignDelta(s[i], 1-s[i])){
       s[i] := 1-s[i];
 

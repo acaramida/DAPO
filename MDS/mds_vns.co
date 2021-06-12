@@ -3,7 +3,7 @@ include "file_io";
 pragma mode = randomized;
 
 int t1 = System.getCPUTime();
-string fname = "gplus_2000.col";
+string fname = "gplus_10000.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
 //showMat(mat);
@@ -27,7 +27,8 @@ Solver<LS> ls();
 
    /**
       For every vertex that is covered it needs to be in the set
-      or have a neighbour that is
+      or have a neighbour that is, this means for all vertices of s
+      the sum of the vertex with the sum of all its neighbors has to be 1 or bigger.
    */
    forall (i in Vertices) {
       S.post(1 <= s[i] + sum(j in Vertices:  mat[i, j] > 0) (s[j]) );
@@ -44,7 +45,7 @@ int d = 1;
 int sol[Vertices];
 
 int maxit = 2*n;
-int max_change = n/2;
+int max_change = n;
 int it = 0;
 int best = violations; int best_s = n; int best_it = it;
 
@@ -65,7 +66,7 @@ while(it < maxit && d <= max_change) {
          }
       it = it + 1;
    }
-// keep best prepare diversification
+// keep best and prepare diversification
    if (violations < best || (violations == 0 && F.evaluation() < best_s)){
       d = 1;
       best = violations;
