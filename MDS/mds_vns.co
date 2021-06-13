@@ -2,16 +2,17 @@ import cotls;
 include "file_io";
 pragma mode = randomized;
 
-int t1 = System.getCPUTime();
 string fname = "gplus_10000.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
+int optimum = getOptimum(directory + fname);
 //showMat(mat);
 
 int n = mat.getSize(0);
 range Vertices = 1..n;
 range D = 0..1;
 
+int t1 = System.getCPUTime();
 Solver<LS> ls();
     ConstraintSystem<LS> S(ls);
    /**
@@ -51,11 +52,11 @@ int d = 1;
 int sol[Vertices];
 
 int maxit = 2*n;
-int max_change = n;
+int max_change = n/2;
 int it = 0;
 int best = violations; int best_s = n; int best_it = it;
 
-while(it < maxit && d <= max_change) {
+while( (it < maxit && d <= max_change) || ( best_s != optimum && best > 0) ) {
 // diversify - select a new neighbourhood
    forall(i in 1..d)
       select(v in Vertices){

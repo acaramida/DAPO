@@ -9,7 +9,20 @@ function string extend_name(string fname){
 
 // READ functions
 
-function int [,] readDimacsGraph(string fName) { // mds 
+// read optimum dominating set
+function int getOptimum(string fName) { // mds
+   string optName = extend_name(fName);
+   ifstream ipt(optName);
+   string [] dims;
+
+   do{
+       dims = ipt.getLine().split(" ");
+   }while(dims[0] != "p");
+   
+   return dims[4].toInt();
+}
+
+function int [,]readDimacsGraph(string fName) { // mds 
    string optName = extend_name(fName);
    ifstream ipt(optName);
    string [] dims;

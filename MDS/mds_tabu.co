@@ -2,16 +2,17 @@ import cotls;
 include "file_io";
 pragma mode = randomized;
 
-int t1 = System.getCPUTime();
-string fname = "anna.col";
+string fname = "gplus_10000.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
+int optimum = getOptimum(directory + fname);
 //showMat(mat);
 
 int n = mat.getSize(0);
 range Vertices = 1..n;
 range D = 0..1;
 
+int t1 = System.getCPUTime();
 Solver<LS> ls();
    ConstraintSystem<LS> S(ls);
    /**
@@ -50,14 +51,14 @@ ls.close();
 
 int maxit = 2*n;
 int it = 0;
-int change = 0;
-int max_change = n;
+int change = 1;
+int max_change = n/2;
 int best = violations; int best_s = n; int best_it = it;
 int tbl = 4; int tblMin = 2; int tblMax = 10; int tabu[Vertices] = 0;
 Solution solution(ls);
 int nonImprovingSteps = 0; int maxNonImproving = 100; int restartFreq = 1500;
 
-while(it < maxit && change < max_change) {
+while( (it < maxit && change <= max_change) || ( best_s != optimum && best > 0) ) {
    int old = violations;
    /**
       choose the vertex that leads to the smallest number of violations (the minimal
