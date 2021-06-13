@@ -2,7 +2,7 @@ import cotls;
 include "file_io";
 pragma mode = randomized;
 
-string fname = "gplus_10000.col";
+string fname = "gplus_20000.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
 int optimum = getOptimum(directory + fname);
@@ -56,7 +56,7 @@ int max_change = n/2;
 int it = 0;
 int best = violations; int best_s = n; int best_it = it;
 
-while( (it < maxit && d <= max_change) || ( best_s != optimum && best > 0) ) {
+while( (it < maxit && d <= max_change) && ( best_s != optimum || best > 0) ) {
 // diversify - select a new neighbourhood
    forall(i in 1..d)
       select(v in Vertices){

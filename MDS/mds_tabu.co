@@ -2,7 +2,7 @@ import cotls;
 include "file_io";
 pragma mode = randomized;
 
-string fname = "gplus_10000.col";
+string fname = "anna.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
 int optimum = getOptimum(directory + fname);
@@ -57,8 +57,7 @@ int best = violations; int best_s = n; int best_it = it;
 int tbl = 4; int tblMin = 2; int tblMax = 10; int tabu[Vertices] = 0;
 Solution solution(ls);
 int nonImprovingSteps = 0; int maxNonImproving = 100; int restartFreq = 1500;
-
-while( (it < maxit && change <= max_change) || ( best_s != optimum && best > 0) ) {
+while( (it < maxit && change <= max_change) && ( best_s != optimum || best > 0) ) {
    int old = violations;
    /**
       choose the vertex that leads to the smallest number of violations (the minimal
@@ -76,8 +75,8 @@ while( (it < maxit && change <= max_change) || ( best_s != optimum && best > 0) 
       if (violations >= old && tbl < tblMax)
          tbl++;
 
-      /*cout << " change var " << i << " to "<< s[i] <<"; delta = "<< delta << endl;  
-      cout << "-- iteration = " << it << "; violations = " << violations <<"; set size = "<< F.evaluation() << endl;*/
+      cout << " change var " << i << " to "<< s[i] <<"; delta = "<< delta << endl;  
+      cout << "-- iteration = " << it << "; violations = " << violations <<"; set size = "<< F.evaluation() << endl;
    
    }
    /**
