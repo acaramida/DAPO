@@ -13,7 +13,7 @@ range Vertices = 1..n;
 range D = 0..1;
 
 Solver<LS> ls();
-   ConstraintSystem<LS> S(ls);
+    ConstraintSystem<LS> S(ls);
    /**
       Array of all vertices with values 0 or 1
       0 means it doesn't belong to the dominating set
@@ -21,7 +21,7 @@ Solver<LS> ls();
    */
    var{int} s[i in Vertices] (ls, D) := 0;
 
-   //start with a random vertex set to 1
+   //Seed, start with a random vertex set to 1
    select(v in Vertices)
          s[v] := 1;
 
@@ -33,11 +33,17 @@ Solver<LS> ls();
    forall (i in Vertices) {
       S.post(1 <= s[i] + sum(j in Vertices:  mat[i, j] > 0) (s[j]) );
    }
-
+   
+   // Function for the size of the set
    FunctionExpr<LS> F( sum (v in Vertices) s[v] );
 
+   /** 
+      Otimisation function
+      gives more importance to covering all vertices than minimizing the set (ratio 11:10)
+   */
    Function<LS> G = 11*S + 10*F;
 
+   // Pointer for the violations
    var{int} violations = S.violations();
     
 ls.close();
@@ -72,8 +78,9 @@ while(it < maxit && d <= max_change) {
       best = violations;
       best_s = F.evaluation();
       best_it = it;
-      forall(i in Vertices) sol[i] = s[i];
-      cout << "best so far of " << best << " with size " << best_s <<" at iteration " << best_it << endl;endl;
+      forall(i in Vertices)
+         sol[i] = s[i];
+      cout << "best so far of " << best << " with size " << best_s <<" at iteration " << best_it << endl;
    } else
       d = d + 1;
  

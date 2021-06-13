@@ -3,7 +3,7 @@ include "file_io";
 pragma mode = randomized;
 
 int t1 = System.getCPUTime();
-string fname = "gplus_10000.col";
+string fname = "anna.col";
 string directory = "../tests/";
 int[,] mat = readDimacsGraph(directory + fname);
 //showMat(mat);
@@ -21,7 +21,7 @@ Solver<LS> ls();
    */
    var{int} s[i in Vertices] (ls, D) := 0;
 
-   //start with a random vertex set to 1
+   //Seed, start with a random vertex set to 1
    select(v in Vertices)
          s[v] := 1;
 
@@ -33,11 +33,17 @@ Solver<LS> ls();
    forall (i in Vertices) {
       S.post(1 <= s[i] + sum(j in Vertices:  mat[i, j] > 0) (s[j]) );
    }
-
+   
+   // Function for the size of the set
    FunctionExpr<LS> F( sum (v in Vertices) s[v] );
 
+   /** 
+      Otimisation function
+      gives more importance to covering all vertices than minimizing the set (ratio 11:10)
+   */
    Function<LS> G = 11*S + 10*F;
 
+   // Pointer for the violations
    var{int} violations = S.violations();
     
 ls.close();
@@ -49,7 +55,7 @@ int max_change = n;
 int best = violations; int best_s = n; int best_it = it;
 int tbl = 4; int tblMin = 2; int tblMax = 10; int tabu[Vertices] = 0;
 Solution solution(ls);
-int nonImprovingSteps = 0; int maxNonImproving = 100; int restartFreq = 1000;
+int nonImprovingSteps = 0; int maxNonImproving = 100; int restartFreq = 1500;
 
 while(it < maxit && change < max_change) {
    int old = violations;
@@ -105,10 +111,13 @@ while(it < maxit && change < max_change) {
    }
    /** 
       Check if restartFreq is reached and no solution found
-      change a random vertex to inverse (0 to 1, 1 to 0)
+      if true restart with a new seed
    */
    if (it !=0 && (it % restartFreq == 0) && (best > 0) ) {
       // change a randomm vertex
+      with delay(ls)
+         forall (i in Vertices)
+            s[i] := 0;
       select(v in Vertices)
          s[v] := 1-s[v];
       best = S.violations();
